@@ -83,4 +83,4 @@ SSE.prototype.sendJSON = function (data) {
   this.sendData(JSON.stringify(data));
 };
 
-module.export = SSE;
+module.exports = SSE;
