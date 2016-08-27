@@ -64,4 +64,25 @@ SSE.prototype.middleware = function (req, res, next) {
   next();
 };
 
+SSE.prototype.sendData = function (data) {
+  if (typeof this.paramName === 'string') {
+    var param = req.params[this.paramName];
+    if (param) {
+      for (var i = 0; i < this.connections[param].length; i++) {
+        this.connections[param][i].sendData(data);
+      }
+    } else {
+      console.log(this.paramName, 'not found in request params');
+    }
+  } else {
+    for (var i = 0; i < this.connections.length; i++) {
+      this.connections[i].sendData(data);
+    }
+  }
+};
+
+SSE.prototype.sendJSON = function (data) {
+  this.sendData(JSON.stringify(data));
+};
+
 modules.export = SSE;
