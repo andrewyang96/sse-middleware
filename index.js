@@ -1,5 +1,3 @@
-var makeMiddleware = require('./make-middleware');
-
 function SSE(paramName) {
   this.paramName = paramName;
   if (typeof this.paramName === 'string') {
@@ -85,4 +83,4 @@ SSE.prototype.sendJSON = function (data) {
   this.sendData(JSON.stringify(data));
 };
 
-modules.export = SSE;
+module.export = SSE;
