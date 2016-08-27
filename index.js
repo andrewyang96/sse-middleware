@@ -34,8 +34,8 @@ SSE.prototype._removeConnection = function (req, res) {
       console.log(this.paramName, 'not found in request params');
     }
   } else {
-    var idx = connections.indexOf(res);
-    connections.splice(idx, 1);
+    var idx = this.connections.indexOf(res);
+    this.connections.splice(idx, 1);
   }
 };
 
@@ -47,9 +47,9 @@ SSE.prototype.middleware = function (req, res, next) {
   });
 
   this._addConnection(req, res);
-  res.on('close', function () {
+  res.once('close', function () {
     this._removeConnection(req, res);
-  });
+  }.bind(this));
 
   res.sendData = function (data) {
     res.write('data: ' + data + '\n\n');
