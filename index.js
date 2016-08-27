@@ -1,5 +1,3 @@
-var makeMiddleware = require('./make-middleware');
-
 function SSE(paramName) {
   this.paramName = paramName;
   if (typeof this.paramName === 'string') {
