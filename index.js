@@ -1,54 +1,67 @@
 var makeMiddleware = require('./make-middleware');
 
-var SSE = {};
-
-SSE.prototype.makeSource = function (paramName) {
-  function EventEmitter(paramName) {
-    this.paramName = paramName;
-    if (typeof this.paramName === 'string') {
-      this.connections = {};
-    } else {
-      this.connections = [];
-    }
+function SSE(paramName) {
+  this.paramName = paramName;
+  if (typeof this.paramName === 'string') {
+    this.connections = {};
+  } else {
+    this.connections = [];
   }
+};
 
-  EventEmitter.prototype.addConnection = function (req, res) {
-    if (typeof this.paramName === 'string') {
-      req.params[this.paramName]
-      if (param) {
-        try {
-          this.connections[param].push(res);
-        } catch (TypeError) {
-          this.connections[param] = [res];
-        }
-      } else {
-        // TODO: emit error
+SSE.prototype._addConnection = function (req, res) {
+  if (typeof this.paramName === 'string') {
+    var param = req.params[this.paramName];
+    if (param) {
+      try {
+        this.connections[param].push(res);
+      } catch (TypeError) {
+        this.connections[param] = [res];
       }
     } else {
-      this.connections.push(res);
+      console.log(this.paramName, 'not found in request params');
     }
-  };
-
-  EventEmitter.prototype.removeConnection = function (req, res) {
-    if (typeof this.paramName === 'string') {
-      var param = req.params[this.paramName];
-      if (param) {
-        var idx = this.connections[param].indexOf(res);
-        this.connections[param].splice(idx, 1);
-      } else {
-        // TODO: emit error
-      }
-    } else {
-      var idx = connections.indexOf(res);
-      connections.splice(idx, 1);
-    }
-  };
-
-  EventEmitter.prototype.sendData = function (req, data) {
-    // TODO: implement
+  } else {
+    this.connections.push(res);
   }
+};
 
-  return makeMiddleware(paramName).bind(this);
+SSE.prototype._removeConnection = function (req, res) {
+  if (typeof this.paramName === 'string') {
+    var param = req.params[this.paramName];
+    if (param) {
+      var idx = this.connections[param].indexOf(res);
+      this.connections[param].splice(idx, 1);
+    } else {
+      console.log(this.paramName, 'not found in request params');
+    }
+  } else {
+    var idx = connections.indexOf(res);
+    connections.splice(idx, 1);
+  }
+};
+
+SSE.prototype.middleware = function (req, res, next) {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+
+  this._addConnection(req, res);
+  res.on('close', function () {
+    this._removeConnection(req, res);
+  });
+
+  res.sendData = function (data) {
+    res.write('data: ' + data + '\n\n');
+  };
+
+  res.sendJSON = function (data) {
+    return res.sendData(JSON.stringify(data));
+  };
+
+  next();
 };
 
 modules.export = SSE;
