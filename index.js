@@ -62,10 +62,12 @@ SSE.prototype.middleware = function (req, res, next) {
   next();
 };
 
-SSE.prototype.sendData = function (data) {
+SSE.prototype.sendData = function (data, param) {
   if (typeof this.paramName === 'string') {
-    var param = req.params[this.paramName];
     if (param) {
+      if (this.connections[param] === undefined) {
+        this.connections[param] = [];
+      }
       for (var i = 0; i < this.connections[param].length; i++) {
         this.connections[param][i].sendData(data);
       }
@@ -79,8 +81,8 @@ SSE.prototype.sendData = function (data) {
   }
 };
 
-SSE.prototype.sendJSON = function (data) {
-  this.sendData(JSON.stringify(data));
+SSE.prototype.sendJSON = function (data, param) {
+  this.sendData(JSON.stringify(data), param);
 };
 
 module.exports = SSE;
