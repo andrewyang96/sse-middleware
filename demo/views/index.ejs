@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Node SSE Example</title>
+    <title>Node SSE Demo</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-	<h1>Node SSE Example</h1>
+	<h1>Node SSE Demo</h1>
 	<h4>Rand Num: <span id="randNum"></span></h4>
 	<h4>Rand UUID: <span id="randUUID"></span></h4>
-    <script src="/script.js"></script>
+  <hr/>
+  <h3>Multiples Generator(s) to Display</h3>
+  <form id="toggleForm">
+    <input type="checkbox" id="c2" value="2" /> <label for="2">2</label>
+    <input type="checkbox" id="c3" value="3" /> <label for="3">3</label>
+    <input type="checkbox" id="c4" value="4" /> <label for="4">4</label>
+    <input type="checkbox" id="c5" value="5" /> <label for="5">5</label>
+    <input type="checkbox" id="c6" value="6" /> <label for="6">6</label>
+    <input type="checkbox" id="c7" value="7" /> <label for="7">7</label>
+    <input type="checkbox" id="c8" value="8" /> <label for="8">8</label>
+    <input type="checkbox" id="c9" value="9" /> <label for="9">9</label>
+  </form>
+  <div id="multiplesTracking"></div>
+  <script src="/script.js"></script>
   </body>
 </html>
