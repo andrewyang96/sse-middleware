@@ -27,16 +27,17 @@ app.get('/randuuid', randUUIDSSE.middleware.bind(randUUIDSSE), function (req, re
 var randMultiplesSSE = new SSE('num');
 app.get('/randmultiples/:num', randMultiplesSSE.middleware.bind(randMultiplesSSE), function (req, res, next) {
   if (['2', '3', '4', '5', '6', '7', '8', '9'].indexOf(req.params.num) === -1) {
-    next();
+    res.status = 422;
+    return res.end();
   }
   res.sendData(randMultiples[Number.parseInt(req.params.num)]);
-  console.log('Connected to random multiple endpoint: ', req.params.num);
+  console.log('Connected to random multiple endpoint:', req.params.num);
 });
 
 /* Random value generation */
 var generateRandomDelay = function () {
   var delay = Math.floor(Math.random() * 3001) + 500;
-  console.log('Generated delay of', delay);
+  // console.log('Generated delay of', delay);
   return delay;
 };
 
@@ -46,7 +47,7 @@ var generateRandomNumber = function () {
 var randNum = generateRandomNumber();
 var updateRandomNumber = function () {
   randNum = generateRandomNumber();
-  console.log('Updated number to', randNum);
+  // console.log('Updated number to', randNum);
   randNumSSE.sendData(randNum);
   setTimeout(updateRandomNumber, generateRandomDelay());
 };
@@ -58,7 +59,7 @@ var generateRandomUUID = function () {
 var randUUID = generateRandomUUID();
 var updateRandomUUID = function () {
   randUUID = generateRandomUUID();
-  console.log('Updated UUID to', randUUID);
+  // console.log('Updated UUID to', randUUID);
   randUUIDSSE.sendData(randUUID);
   setTimeout(updateRandomUUID, generateRandomDelay());
 };
@@ -70,7 +71,7 @@ var generateRandomMultiple = function (num) {
 var randMultiples = {};
 var updateMultiple = function (num) {
   randMultiples[num] = generateRandomMultiple(num);
-  console.log('Updated multiple', num, 'to', randMultiples[num]);
+  // console.log('Updated multiple', num, 'to', randMultiples[num]);
   randMultiplesSSE.sendData(randMultiples[num], num);
   setTimeout(function () {
     updateMultiple(num);
